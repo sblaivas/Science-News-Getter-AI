@@ -31,7 +31,7 @@ def search_newsapi(query):
     "domains": "sciencealert.com,sciencedaily.com,phys.org,newscientist.com,space.com,nasa.gov,spacenews.com,arstechnica.com,theverge.com,techcrunch.com,wired.com,engadget.com,zdnet.com,technologyreview.com",
     
     }   
-    #match the request
+    #send the request
     response = requests.get(url, params=params)
     #check if status worked
     if response.status_code == 200:
@@ -39,7 +39,8 @@ def search_newsapi(query):
     else:
         print("Error:", response.status_code, response.text)
         return None
-
+    
+    #add articles to here
     article_search = []
     #loop thorough articles and return title, description, source, and url 
     for article in data["articles"]:
@@ -51,7 +52,7 @@ def search_newsapi(query):
     return article_search
 
 if __name__ == "__main__":
-    print(search_newsapi("black holes"))
+    print(search_newsapi("space"))
 
 
 
