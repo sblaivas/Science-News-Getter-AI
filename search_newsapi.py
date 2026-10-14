@@ -4,22 +4,32 @@ import requests
 import os
 #to load .env file
 from dotenv import load_dotenv
+from datetime import datetime, timedelta
 
 #call function so .env becomes assessible 
 load_dotenv()
 #Read API
 newsapi_key = os.getenv("NEWSAPI_KEY")
 
-def search_newsapi(query, category="science"):
-    #URL string for NewsAPI's top-headlines endpoint
+def search_newsapi(query):
+
+    #URL string for NewsAPI' endpoint
     url = "https://newsapi.org/v2/everything"
+
+    # Yesterday's date as YYYY-MM-DD, so we only get recent articles
+    yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
 
     #Python dictionary where each key matches a parameter name NewsAPI expects,
     params = {
     "apiKey": newsapi_key,
     "q": query,
     "language": "en",
-    "sortBy": "publishedAt"
+    "sortBy": "publishedAt",
+    "pageSize": 10,
+    "searchIn": "title,description",
+    "from": yesterday,
+    "domains": "sciencealert.com,sciencedaily.com,phys.org,newscientist.com,space.com,nasa.gov,spacenews.com,arstechnica.com,theverge.com,techcrunch.com,wired.com,engadget.com,zdnet.com,technologyreview.com",
+    
     }   
     #match the request
     response = requests.get(url, params=params)

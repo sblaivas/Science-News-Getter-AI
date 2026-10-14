@@ -10,18 +10,15 @@ client = anthropic.Anthropic()
 tools = [
     {
         "name": "search_newsapi",
-        "description": "Searches NewsAPI for recent science news headlines matching a topic. Use for general science journalism and current events.",
+        "description": "Searches NewsAPI for recent news articles on science, space, and technology. Wrap multi-word phrases in double quotes; use OR to combine topics.",
         "input_schema": {
             "type": "object",
             "properties": {
                 "query": {
                     "type": "string",
                     "description": "The search topic, e.g. 'black holes' or 'climate change'"
-                },
-                "category": {
-                    "type": "string",
-                    "description": "News category, defaults to 'science'"
                 }
+            
             },
             "required": ["query"]
         }
@@ -47,10 +44,10 @@ tools = [
 ]
 response = client.messages.create(
     model="claude-sonnet-4-6",
-    max_tokens=1024,
+    max_tokens = 4000,
     tools=tools,
     messages=[
-        {"role": "user", "content": "Compile today's science briefing, grouped by subfield."}
+        {"role": "user", "content": "Search for today's news in three areas: science, space, and technology. Search each area separately using search_newsapi. Use news articles, not research papers. From the results, pick the single most important article in each area. Return exactly 3 articles: one science, one space, one tech. For each, give the headline, a 2-sentence summary, and the link."}
     ]
 )
 
@@ -59,7 +56,7 @@ for block in response.content:
         if block.name == "search_newsapi":
                     result = search_newsapi(
                         query=block.input["query"],
-                        category=block.input.get("category", "science")
+                    
                     )
                     print("Called search_newsapi, got:", result)
 
