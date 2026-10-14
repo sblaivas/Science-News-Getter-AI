@@ -12,14 +12,14 @@ newsapi_key = os.getenv("NEWSAPI_KEY")
 
 def search_newsapi(query, category="science"):
     #URL string for NewsAPI's top-headlines endpoint
-    url = "https://newsapi.org/v2/top-headlines"
+    url = "https://newsapi.org/v2/everything"
 
     #Python dictionary where each key matches a parameter name NewsAPI expects,
     params = {
     "apiKey": newsapi_key,
-    "category": category,
     "q": query,
-    "language": "en"
+    "language": "en",
+    "sortBy": "publishedAt"
     }   
     #match the request
     response = requests.get(url, params=params)
