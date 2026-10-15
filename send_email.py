@@ -14,7 +14,9 @@ def send_email(subject, body):
     msg["From"] = gmail_address                   
     msg["To"] = gmail_address                     
     msg.set_content(body)                       
-
+    #debug check
+    print(f"Gmail address set: {bool(gmail_address)}, app password length: {len(gmail_app_password or '')}", flush=True)
+    
     #first we connect to gmails server
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:  
         #login in
