@@ -1,9 +1,9 @@
 import anthropic
-import os
 from dotenv import load_dotenv
 from fetch_arxiv import fetch_arxiv
 from search_newsapi import search_newsapi
-
+from send_email import send_email                
+from datetime import date  
 
 load_dotenv()
 client = anthropic.Anthropic()
@@ -57,6 +57,7 @@ messages = [
         "From the results, pick the single most important article in each area. " 
         "Return exactly 3 articles: one science, one space, one tech. "
         "For each, give the headline, a 2-sentence summary, and the link. "
+        "Format it as plain text for an email: no markdown, no emojis, and put each link on its own line. "
         )}
 ]
 #we want to keep talking to Claude until it stops asking for tools
@@ -72,9 +73,16 @@ while True:
     messages.append({"role": "assistant", "content": response.content})
     #if Claude isn't asking for a tool, it's done, so we will then  print the answer and stop
     if response.stop_reason != "tool_use":
+        #start with empty text
+        briefing = ""
         for block in response.content:
             if block.type == "text":
-                print(block.text)
+                briefing += block.text
+        #still show it in the terminal for debug purpose
+        print(briefing)                 
+        #email it, with today date in the subject
+        send_email(f"Science Briefing: {date.today()}", briefing)  
+        print("Email sent!") 
         break
 
     #empty list so we can store the rounds tool results
@@ -91,7 +99,7 @@ while True:
                     query=block.input["query"],
                     max_results=block.input.get("max_results", 10),
                 )
-                #show which tool ran and with what input
+            #show which tool ran and with what input
             print(f"Called {block.name} with {block.input}")
             #put the ansewer and the format expected
             tool_results.append({
