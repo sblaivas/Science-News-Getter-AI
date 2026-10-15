@@ -17,8 +17,7 @@ def search_newsapi(query):
     url = "https://newsapi.org/v2/everything"
 
     # Yesterday's date as YYYY-MM-DD, so we only get recent articles
-    #note: widened to two days now
-    yesterday = (datetime.now() - timedelta(days=2)).strftime("%Y-%m-%d")
+    yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
 
     #Python dictionary where each key matches a parameter name NewsAPI expects,
     params = {

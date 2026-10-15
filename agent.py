@@ -58,7 +58,6 @@ messages = [
         "Return exactly 3 articles: one science, one space, one tech. "
         "For each, give the headline, a 2-sentence summary, and the link. "
         "Format it as plain text for an email: no markdown, no emojis, and put each link on its own line. "
-        "If a search returns no results, try at most one different query for that area, then move on. "
         )}
 ]
 #we want to keep talking to Claude until it stops asking for tools
