@@ -18,11 +18,8 @@ def send_email(subject, body):
     print(f"Gmail address set: {bool(gmail_address)}, app password length: {len(gmail_app_password or '')}", flush=True)
     
     #first we connect to gmails server
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:  
-        #login in
-        server.login(gmail_address, gmail_app_password)  
-        #send the email  
-        server.send_message(msg)  
+    with smtplib.SMTP("smtp.gmail.com", 587) as server:   # connect to Gmail on port 587
+        server.starttls()                                  # switch the connection to encrypted
     #closes connection automatically                
 
 if __name__ == "__main__":
