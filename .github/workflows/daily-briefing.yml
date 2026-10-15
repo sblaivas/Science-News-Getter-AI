@@ -1,0 +1,43 @@
+name: Daily Science Briefing      
+#Make the schedule so that it runs everyday. Need to count for Daylight savings
+on:                           
+  schedule:                          
+    - cron: "0 15 * * *"              
+    - cron: "0 16 * * *"   
+  workflow_dispatch:         
+              
+
+jobs:
+  briefing:                       
+    runs-on: ubuntu-latest            
+    steps:
+      - name: Only continue at 11am New York time
+        id: check
+        #the alert will trigger if the manual trigger is clicked or if it is 11 am in new york
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$(TZ=America/New_York date +%H)" = "11" ]; then
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          fi
+      #WE will be using virtual machines so when the code aove returns true we will downlaod the code, install python, install the needed packages, and then run the agent.
+      #this will happen every day and we will then delete the machine autimatically after
+      - name: Download the code
+        if: steps.check.outputs.go == 'true'
+        uses: actions/checkout@v4     
+      - name: Install Python
+        if: steps.check.outputs.go == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install packages
+        if: steps.check.outputs.go == 'true'
+        run: pip install -r requirements.txt
+
+      - name: Run the agent
+        if: steps.check.outputs.go == 'true'
+        run: python agent.py
+        env:                          
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }}
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
